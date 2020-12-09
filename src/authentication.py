@@ -78,8 +78,7 @@ def attempt_login():
         if password.lower() == "exit":
             io.brk()
             return
-        
-        print(user["password"])
+            
 
         # If the users password does not match the entered password...
         if user["password"] != password:
