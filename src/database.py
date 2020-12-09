@@ -1,6 +1,3 @@
-# For this app, I decided to use SQL as a database (SQLite3 to be exact).
-# If need be I can also make a normal text file database if SQL is an issue.
-
 import sqlite3
 
 # Upon the file being opened, create a connection to the database.
