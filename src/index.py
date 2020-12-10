@@ -65,7 +65,9 @@ def start_handler_loop():
 
 
         elif command == "leaderboard":
-            2
+            # Fetch the users with the highest score (top 5).
+            top_users = database.fetch_leaderboard()
+                    
 
         # If input has not satisfied any condition...
         else:
