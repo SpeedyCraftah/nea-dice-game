@@ -20,6 +20,23 @@ db.execute('''
 
 # Methods to make interacting with the database quick and simple.
 
+# Sort all users in the database from lowest score to highest, then return the top 5 entries.
+def fetch_leaderboard():
+    top_users = db.execute('SELECT * FROM users ORDER BY score ASC LIMIT 5').fetchall()
+    
+    # Parse the results into a dictionary.
+    top_users_parsed = []
+    
+    for user in top_users:
+        top_users_parsed.append({
+          "username": user[0],
+          "password": user[1],
+          "score": user[2]
+        })
+        
+    # Return the data.
+    return top_users_parsed
+            
 # Fetch the account by username, ignore the username's case.
 def fetch_user_by_username(username: str):
     # Use SQLite's pre-prepared statements to avoid SQL Injection (in basic sense, ? gets replaced with username).
