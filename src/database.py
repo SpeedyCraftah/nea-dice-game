@@ -4,7 +4,7 @@ import sqlite3
 db = sqlite3.connect(":memory:")
 
 # Create a table for the users and scores if one doesn't already exist.
-# - Username: String (30 chars max, cannot be nothing, unique regardless of case).
+# - Username: String (30 chars max, cannot be nothing, unique regardless of case)
 # - Password: String (cannot be nothing)
 # - Score: Integer (default 0, cannot be nothing)
 
@@ -18,20 +18,26 @@ db.execute('''
     ) 
 ''')
 
+# ! REMOVE IN PRODUCTION
+for i in range(4):
+    db.execute("INSERT INTO users (username, password, score) VALUES (?, ?, ?)", (f"Dummy {chr(ord('@') + (i + 1))}", "botney", (i + 1) * 7))
+
 # Methods to make interacting with the database quick and simple.
 
 # Sort all users in the database from lowest score to highest, then return the top 5 entries.
 def fetch_leaderboard():
-    top_users = db.execute('SELECT * FROM users ORDER BY score ASC LIMIT 5').fetchall()
+    top_users = db.execute('SELECT * FROM users ORDER BY score DESC LIMIT 5').fetchall()
     
     # Parse the results into a dictionary.
     top_users_parsed = []
     
-    for user in top_users:
+    # Use the 'enumerate' function to also get an index while iterating (this will be the position).
+    for index, user in enumerate(top_users):
         top_users_parsed.append({
-          "username": user[0],
-          "password": user[1],
-          "score": user[2]
+            "position": index + 1,
+            "username": user[0],
+            "password": user[1],
+            "score": user[2]
         })
         
     # Return the data.
@@ -63,14 +69,10 @@ def create_user(username: str, password: str):
     ''', (username, password))
 
     # Fetch the created user.
-    user = db.execute('SELECT * FROM users WHERE LOWER(username) = ?', (username,)).fetchone()
+    user = fetch_user_by_username(username)
 
     # Return the user.
-    return {
-        "username": user[0],
-        "password": user[1],
-        "score": user[2]
-    }
+    return user
 
 # Closes the database connection, done at program end.
 def close_connection():

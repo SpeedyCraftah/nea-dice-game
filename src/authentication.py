@@ -117,6 +117,7 @@ def attempt_registration():
         # If the username is shorter than 3 characters or longer than 30...
         if len(username) < 3 or len(username) > 30:
             io.cout("SECURITY", "This username is either shorter than 3 characters or longer than 30.")
+            continue
 
         # Check if the username is already taken (SQLite will ignore case).
         user = database.fetch_user_by_username(username)

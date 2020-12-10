@@ -61,12 +61,26 @@ def start_handler_loop():
             io.cout("GAME", f"Welcome {first_user['username']}! You are player one.")
 
             # Authenticate the second user.
-            
-
+        
 
         elif command == "leaderboard":
             # Fetch the users with the highest score (top 5).
             top_users = database.fetch_leaderboard()
+
+            if len(top_users) == 0:
+                io.cout("LEADERBOARD", "There is nothing to display.")
+                continue
+
+            leaderboard_users_parsed = []
+
+            for user in top_users:
+                leaderboard_users_parsed.append(f"{user['position']}. {user['username']} - {user['score']} points")
+
+            io.cout("LEADERBOARD", "Top 5 users with the highest score", [
+                "=== Leaderboard ===",
+            ] + leaderboard_users_parsed + [
+                "=== Leaderboard ==="
+            ])
                     
 
         # If input has not satisfied any condition...
