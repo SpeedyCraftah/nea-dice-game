@@ -1,4 +1,4 @@
-from src import database, io, authentication as auth
+from src import database, io, authentication as auth, game
 
 def main():
     print("========== Competitive Dice Game ==========")
@@ -75,6 +75,9 @@ def start_handler_loop():
                     
             # Start the game.
             
+            io.cout("GAME", "Starting game...")
+                    
+            game.start(first_user, second_user)
         
 
         elif command == "leaderboard":
