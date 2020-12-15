@@ -1,7 +1,5 @@
 from src import database, io  
 
-#szymon is bad
-
 def attempt_authentication():
     io.brk()
     io.cout("SECURITY", "Hello user. Please type 'login' to authenticate yourself. If you do not have an account, type 'register' to create an account now. You can type 'exit' at any point to exit and go back to the main menu.")
