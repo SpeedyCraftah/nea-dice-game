@@ -61,6 +61,20 @@ def start_handler_loop():
             io.cout("GAME", f"Welcome {first_user['username']}! You are player one.")
 
             # Authenticate the second user.
+            
+            io.cout("GAME", "Launching login prompt for second user...")
+
+            # Authenticate the first user.
+            second_user = auth.attempt_authentication()
+
+            if not second_user:
+                io.cout("GAME", "Authentication failed. Type 'play' once you are ready to play.")
+                continue
+
+            io.cout("GAME", f"Welcome {second_user['username']}! You are player two.")
+                    
+            # Start the game.
+            
         
 
         elif command == "leaderboard":
