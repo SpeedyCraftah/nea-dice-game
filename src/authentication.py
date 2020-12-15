@@ -1,5 +1,6 @@
 from src import database, io  
 
+#szymon is bad
 
 def attempt_authentication():
     io.brk()
