@@ -1,4 +1,4 @@
-from src import database, io, authentication as auth
+from src import database, io, game, authentication as auth
 
 def main():
     print("========== Competitive Dice Game ==========")
@@ -58,10 +58,21 @@ def start_handler_loop():
                 io.cout("GAME", "Authentication failed. Type 'play' once you are ready to play.")
                 continue
 
-            io.cout("GAME", f"Welcome {first_user['username']}! You are player one.")
+            io.cout("GAME", f"Hello {first_user['username']}! You are player one.")
 
             # Authenticate the second user.
-        
+            io.cout("GAME", "Launching login prompt for second user...")
+
+            second_user = auth.attempt_authentication()
+
+            if not second_user:
+                io.cout("GAME", "Authentication failed. Type 'play' once you are ready to play.")
+                continue
+
+            io.cout("GAME", f"Hello {second_user['username']}! You are player two.")
+
+            # Start the game.
+            game.start(first_user, second_user)
 
         elif command == "leaderboard":
             # Fetch the users with the highest score (top 5).
