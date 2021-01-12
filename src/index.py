@@ -71,6 +71,8 @@ def start_handler_loop():
 
             io.cout("GAME", f"Hello {second_user['username']}! You are player two.")
 
+            io.cout("GAME", "Starting...")
+
             # Start the game.
             game.start(first_user, second_user)
 
