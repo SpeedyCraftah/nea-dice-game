@@ -69,6 +69,10 @@ def start_handler_loop():
                 io.cout("GAME", "Authentication failed. Type 'play' once you are ready to play.")
                 continue
 
+            if second_user["id"] == first_user["id"]:
+                io.cout("GAME", "You cannot authenticate twice! Type 'play' once you are ready to play.")
+                continue
+
             io.cout("GAME", f"Hello {second_user['username']}! You are player two.")
 
             io.cout("GAME", "Starting...")

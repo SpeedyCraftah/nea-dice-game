@@ -1,3 +1,5 @@
+# ! Some important functions (they will be used heavily throughout the program).
+
 # Used to make quick new lines.
 def brk():
     print()

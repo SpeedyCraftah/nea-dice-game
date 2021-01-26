@@ -10,7 +10,8 @@ db = sqlite3.connect(":memory:")
 
 db.execute('''
     CREATE TABLE IF NOT EXISTS users (
-        username VARCHAR(30) PRIMARY KEY,
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username VARCHAR(30),
         password TEXT NOT NULL,
         score INTEGER DEFAULT 0 NOT NULL,
 
@@ -35,9 +36,10 @@ def fetch_leaderboard():
     for index, user in enumerate(top_users):
         top_users_parsed.append({
             "position": index + 1,
-            "username": user[0],
-            "password": user[1],
-            "score": user[2]
+            "id": user[0],
+            "username": user[1],
+            "password": user[2],
+            "score": user[3]
         })
         
     # Return the data.
@@ -55,9 +57,10 @@ def fetch_user_by_username(username: str):
 
     # Return the user as an object to make retrieving data simple (since sqlite returns it unlabaled).
     return {
-        "username": result[0],
-        "password": result[1],
-        "score": result[2]
+        "id": result[0],
+        "username": result[1],
+        "password": result[2],
+        "score": result[3]
     }
 
 # Create a user with a username and password.
@@ -73,6 +76,12 @@ def create_user(username: str, password: str):
 
     # Return the user.
     return user
+
+# Update the players score.
+def update_user_score(username: str, new_score: int):
+    db.execute('''
+        UPDATE users SET score = ? WHERE username = ?
+    ''', (new_score, username))
 
 # Closes the database connection, done at program end.
 def close_connection():
