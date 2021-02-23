@@ -1,15 +1,9 @@
-from random import random
+import random
 from src import database, io
 from time import sleep
 import math
 
-# ! Why use 'random' instead of 'randint'?
-# I have encountered multiple very similar and predictable values with 'randint'
-# So I have taken an approach similar in other languages which is generating
-# A float between 0 and 1 and using it to ouput a random value.
-def better_randint(min, max):
-    return math.floor(random() * max) + min
-
+# Script dedicated for the tie breaker.
 def roll_dice_tie_breaker(turn, total_score):
     io.cout(f"GAME (Player {turn})", "Please roll one dice (enter).")        
     input()
@@ -17,8 +11,10 @@ def roll_dice_tie_breaker(turn, total_score):
 
     sleep(1)
     
-    dice_one = better_randint(1, 6)
+    # Generate a random number (roll dice).
+    dice_one = random.randint(1, 6)
 
+    # Append the roll of the dice to the total score.
     total_score = total_score + dice_one
 
     io.cout(f"GAME (Player {turn})", f"The dice has landed on {dice_one}{'.' if dice_one < 5 else '!'}")
@@ -30,9 +26,11 @@ def roll_dice_tie_breaker(turn, total_score):
     io.cout(f"GAME (Player {turn})", f"Your total score is {total_score}.")
     io.brk()
 
+    # Return the score for further processing.
     return total_score
 
 
+# Script dedicated for the normal game.
 def roll_dice_sequence(turn, total_score):
     io.cout(f"GAME (Player {turn})", "Please roll the two dices (enter).")        
     
@@ -43,16 +41,19 @@ def roll_dice_sequence(turn, total_score):
 
     sleep(1)
     
-    dice_one = better_randint(1, 6)
+    # Generate a random number (first dice).
+    dice_one = random.randint(1, 6)
 
     io.cout(f"GAME (Player {turn})", f"Dice one landed on {dice_one}{'.' if dice_one < 5 else '!'}")
 
     sleep(1)
 
-    dice_two = better_randint(1, 6)
+    # Generate a random number (second dice).
+    dice_two = random.randint(1, 6)
 
     io.cout(f"GAME (Player {turn})", f"Dice two landed on {dice_two}{'.' if dice_two < 5 else '!'}")
 
+    # Create a dice total variable for further processing.
     dice_total = dice_one + dice_two
 
     sleep(0.5)
@@ -60,7 +61,11 @@ def roll_dice_sequence(turn, total_score):
     io.cout(f"GAME (Player {turn})", f"The total value of both dice is {dice_total}{'.' if dice_total < 10 else '. Phenomenal!'}")
     io.brk()
 
+    # Append the points of the rolled dices to the total score.
     score = total_score + dice_total
+
+    # Create a separate variable, cloning the dice_total variable which will be used
+    # to keep track of the gained/lost points (purely for cosmetic purposes).
     turn_total = dice_total
 
     sleep(0.5)
@@ -69,11 +74,17 @@ def roll_dice_sequence(turn, total_score):
     
     # Number is even/odd.
     if (score % 2) == 0:
+        # Add 10 points as per the game condition.
+
         io.cout(f"GAME (Player {turn})", "Your score total is even! Added 10 points to your score.")
+        
         score += 10
         turn_total += 10
     else:
+        # Subtract 5 points as per the game condition.
+
         io.cout(f"GAME (Player {turn})", "Your score total is odd. Subtracted 5 points from your score.")
+        
         score -= 5
         turn_total -= 5
 
@@ -81,6 +92,8 @@ def roll_dice_sequence(turn, total_score):
 
     # If both dices score the same
     if dice_one == dice_two:
+        # Roll an extra dice as per the game condition.
+
         io.cout(f"GAME (Player {turn})", f"Both of the dices have rolled {dice_one}! Please roll an extra dice (enter).")
 
         input()
@@ -89,7 +102,8 @@ def roll_dice_sequence(turn, total_score):
 
         sleep(1)
 
-        dice_three = better_randint(1, 6)
+        # Generate a random number (dice roll).
+        dice_three = random.randint(1, 6)
 
         io.cout(f"GAME (Player {turn})", f"Your extra dice has landed on {dice_three}{', not bad!' if dice_three < 4 else '. Good roll!'}")
 
@@ -103,23 +117,45 @@ def roll_dice_sequence(turn, total_score):
 
     io.brk()
 
+    # Do not allow the score to dip below zero.
+    # Return 0 if the total score is below 0.
     return 0 if score < 0 else score
 
 
 def start(first_user, second_user):
     io.brk()
     io.cout("GAME", "Welcome to the NEA Dice Game! Here is some information:", [
-        "- Game info is on the to-do list"
+        "- Each player rolls a 6-sided dice each",
+        "- There are 5 rounds (a round being each player playing once)",
+        "- If both players have the same score at the end of round 5, additional tie-breaker rounds will endure where each player rolls a dice until someone wins"
     ])
 
+    io.brk()
+    io.cout("GAME", "Here are the game conditions which are determined on your total score:", [
+        "- If your score is even, 10 points will be added to your score",
+        "- If your score is odd, 5 points will be subtracted from your score",
+        "- If the two rolled dices are the same, the player will roll one additional dice which will be added to your score"
+    ])
+
+    io.brk()
+    io.cout("GAME", "Have fun! (press enter to start the game).")
+    io.brk()
+    input()
+
+    # Initialize both players scores (start at 0).
     first_player_score = 0
     second_player_score = 0
 
+    # Keep track of each player's turn (used to determine when to end a round).
     first_players_turn = False
 
+    # Keeps track of the amount of turns in the round (cleared to 0 on a new round).
     turns = 0
+
+    # Keeps track of the round.
     round = 1
 
+    # Determines if tie-breaker mode should be activated, set to true on the same score by two players.
     tie_breaker_mode = False
 
     while True:
