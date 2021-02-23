@@ -1,5 +1,4 @@
 import sqlite3
-import atexit
 import os
 
 # Path to the SQLite file.
@@ -8,9 +7,6 @@ dbPath = os.path.normcase("./database/db.sqlite")
 
 # Create a connection to the database passing the path of the SQLite file.
 db = sqlite3.connect(dbPath, timeout=5)
-
-# Register an event callback that automatically gets called on program SIGINT/SIGTERM (exit).
-atexit.register(lambda: db.close())
 
 # Create a table for the users and scores if one doesn't already exist.
 # - Username: String (30 chars max, cannot be nothing, unique regardless of case)
