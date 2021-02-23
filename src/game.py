@@ -107,13 +107,14 @@ def roll_dice_sequence(turn, total_score):
 
         io.cout(f"GAME (Player {turn})", f"Your extra dice has landed on {dice_three}{', not bad!' if dice_three < 4 else '. Good roll!'}")
 
+        # Add the third dice value onto the scores.
         score += dice_three
         turn_total += dice_three
 
     sleep(0.3)
 
     io.cout(f"GAME (Player {turn})", f"Turn concluded. You have {'lost' if turn_total < 0 else 'gained'} {abs(turn_total)} points. {'Unlucky!' if turn_total < 1 else ''}")
-    io.cout(f"GAME (Player {turn})", f"Your total score is {score}.")
+    io.cout(f"GAME (Player {turn})", f"Your total score is {0 if score < 0 else score}.")
 
     io.brk()
 
@@ -158,29 +159,43 @@ def start(first_user, second_user):
     # Determines if tie-breaker mode should be activated, set to true on the same score by two players.
     tie_breaker_mode = False
 
+
+    # Start the game loop.
     while True:
+        # If it's the first player's turn, set the value to false (second player).
+        # If it's the second player's turn, set the value to true (first player).
         if first_players_turn == True:
             first_players_turn = False
         else:
             first_players_turn = True
         
-        # End round.
+        # If the amount of turns is two or larger, advance the round and reset amount of turns.
         if turns >= 2:
             round += 1
             turns = 0
 
+        # Increment the turn tracker (1 = player 1, 2 = player 2).
         turns += 1
 
+        # If the round number is above 5 (normal game has ended)...
         if round > 5:
+            # If both players have the same score...
             if first_player_score == second_player_score:
                 io.brk()
-                io.cout("GAME", "Starting additional round due to both players' scores being the same.")
+                
+                # Only announce the additional round if it's the start of a new round.
+                if turns <= 1:
+                    io.cout("GAME", "Starting additional round due to both players' scores being the same.")
+                
+                # Set the tie breaker mode to true if it isn't already.
                 tie_breaker_mode = True
+            
+            # If both players don't have the same score... (end of game).
             else:
-                round -= 1
                 break
 
-        # Initial round start script.
+
+        # If it's the first round & turn...
         if round == 1 and turns <= 1:
             io.brk()
             io.cout("GAME", "The game has officially begun. Good luck!")
@@ -190,17 +205,22 @@ def start(first_user, second_user):
         else:
             io.brk()
 
+        # If it's the first turn of a round...
         if turns <= 1:
             io.cout("GAME", f"Round {round}.")
             io.brk()
 
 
+        # If the game is not in tie breaker mode...
         if tie_breaker_mode == False:
+
             # First players turn.
             if first_players_turn == True:
                 io.cout("GAME", f"Player 1 ({first_user['username']}), it is now your turn.")
                 io.brk()
 
+                # Roll dices, augment score based on conditions and set the player's score
+                # to the updated one.
                 first_player_score = roll_dice_sequence(1, first_player_score)
 
             # Second players turn.
@@ -208,15 +228,19 @@ def start(first_user, second_user):
                 io.cout("GAME", f"Player 2 ({second_user['username']}), it is now your turn.")
                 io.brk()
 
+                # Roll dices, augment score based on conditions and set the player's score
+                # to the updated one.
                 second_player_score = roll_dice_sequence(2, second_player_score)
 
-        # Tie breaker mode is on.
+        # If tie breaker mode is on...
         else:
+
             # First players turn.
             if first_players_turn == True:
                 io.cout("GAME", f"Player 1 ({first_user['username']}), it is now your turn.")
                 io.brk()
 
+                # Roll dice and set the player's score to the updated one.
                 first_player_score = roll_dice_tie_breaker(1, first_player_score)
 
             # Second players turn.
@@ -224,29 +248,45 @@ def start(first_user, second_user):
                 io.cout("GAME", f"Player 2 ({second_user['username']}), it is now your turn.")
                 io.brk()
 
+                # Roll dice and set the player's score to the updated one.
                 second_player_score = roll_dice_tie_breaker(2, second_player_score)
 
+    # ! Exited out of while loop, game ended.
+
     io.brk()
-    io.cout("GAME", f"Game session concluded. There was a total of {round} rounds.")
+    
+    # Show the total amount of rounds, substract 1 as the next round has never happened.
+    io.cout("GAME", f"Game session concluded. There was a total of {round - 1} rounds.")
+    
     io.brk()
 
     io.cout("GAME", f"The winner of this session is...")
     sleep(2)
 
+    # If the first player won...
     if first_player_score > second_player_score:
         points_ahead = first_player_score - second_player_score
 
         io.cout("GAME", f"{first_user['username']}! Congratulations.")
         io.cout("GAME", f"You were {points_ahead} point{'' if points_ahead == 1 else 's'} ahead of {second_user['username']}.")
+    
+    # If the second player won...
     else:
         points_ahead = second_player_score - first_player_score
 
         io.cout("GAME", f"{second_user['username']}! Congratulations.")
         io.cout("GAME", f"You were {points_ahead} point{'' if points_ahead == 1 else 's'} ahead of {first_user['username']}.")
 
+    # Update both player's scores
     database.update_user_score(first_user["username"], first_user["score"] + first_player_score)
     database.update_user_score(second_user["username"], second_user["score"] + second_player_score)
+
+    # Commit the changes to the database file as none of the score updates have threw an error.
+    database.db.commit()
 
     io.brk()
     io.cout("GAME", "All of your scores have been updated. Type 'leaderboard' in the menu to look at them!")
     io.cout("GAME", "Returning to menu...")
+
+    # This function has ended and as such it will no longer block further execution
+    # of the menu loop which will automatically return the user back to the menu.

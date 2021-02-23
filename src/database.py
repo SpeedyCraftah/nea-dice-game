@@ -85,13 +85,13 @@ def create_user(username: str, password: str):
     return user
 
 # Update the players score.
+# This is not committed to the database by default due to this function being called
+# twice (as two users' scores will need to be updated), just to keep behaviour
+# consistent in case of a query error.
 def update_user_score(username: str, new_score: int):
     db.execute('''
         UPDATE users SET score = ? WHERE username = ?
     ''', (new_score, username))
-
-    # Save the changes to the database file.
-    db.commit()
 
 # Closes the database connection, done at program end.
 def close_connection():
