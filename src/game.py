@@ -4,7 +4,7 @@ from time import sleep
 import math
 
 # Script dedicated for the tie breaker.
-def roll_dice_tie_breaker(turn, total_score):
+def roll_dice_tie_breaker(turn: int, total_score: int):
     io.cout(f"GAME (Player {turn})", "Please roll one dice (enter).")        
     input()
     io.cout(f"GAME (Player {turn})", "Rolling...")
@@ -31,7 +31,7 @@ def roll_dice_tie_breaker(turn, total_score):
 
 
 # Script dedicated for the normal game.
-def roll_dice_sequence(turn, total_score):
+def roll_dice_sequence(turn: int, total_score: int):
     io.cout(f"GAME (Player {turn})", "Please roll the two dices (enter).")        
     
     input()
@@ -123,7 +123,7 @@ def roll_dice_sequence(turn, total_score):
     return 0 if score < 0 else score
 
 
-def start(first_user, second_user):
+def start(first_user: dict, second_user: dict):
     io.brk()
     io.cout("GAME", "Welcome to the NEA Dice Game! Here is some information:", [
         "- Each player rolls a 6-sided dice each",
