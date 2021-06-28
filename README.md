@@ -1,5 +1,5 @@
 # nea-dice-game
-NEAA Computer Science Project (Dice Game) made with zero external dependencies.
+NEA Computer Science Project (Dice Game) made with zero external dependencies.
 
 # Help
 - The whole menu is command-line based (run 'help' in the menu)
